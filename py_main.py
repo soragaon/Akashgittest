@@ -10,11 +10,6 @@ repo_url = 'https://github.com/rdkcentral/rdkservices.git'
 
 LOCAL_REPO = 'local_repo'
 
-"""
-def checkout(repo, remote_name='origin', branch='sprint/2206'):
-    for remote in repo.remotes:
-        if remote.name == remote_name:
-"""
 
 if __name__ == "__main__" :
 
