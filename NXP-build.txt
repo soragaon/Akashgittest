@@ -1,0 +1,249 @@
+
+
+Other information can be 
+https://developer.technexion.com/docs/how-to-rebuild-and-install-the-kernel-and-kernel-modules-on-ubuntu
+
+https://developer.technexion.com/docs/how-to-rebuild-and-install-the-kernel-and-kernel-modules-on-ubuntu#applicable-platforms
+
+https://developer.technexion.com/docs/using-gpio-from-a-linux-shell
+
+
+
+repo init -u https://github.com/TechNexion/tn-imx-yocto-manifest.git -b zeus_5.4.y-next -m imx-5.4.70-2.3.2.xml
+
+repo init -u https://github.com/TechNexion/tn-imx-yocto-manifest.git -b zeus_5.4.y-stable -m imx-5.4.70-2.3.2.xml
+
+repo init -u https://github.com/TechNexion/tn-imx-yocto-manifest.git -b zeus_5.4.y-next -m imx-5.4.70-2.3.0.xml
+
+repo sync -j8
+
+# To cross compile set the following in the terminal:
+
+export ARCH=arm 
+export CROSS_COMPILE=arm-linux-gnueabihf-
+
+#if want to build the application or libraries from the poky cpmpiler:
+source /opt/poky/2.6.4/environment-setup-armv7at2hf-neon-poky-linux-gnueabi
+
+export ARCH=arm 
+export CROSS_COMPILE=arm-poky-linux-gnueabi-
+
+
+
+
+#to add the features add following in local.conf
+
+CORE_IMAGE_EXTRA_INSTALL += " python python-pip"
+CORE_IMAGE_EXTRA_INSTALL += " python3 python3-pip"
+CORE_IMAGE_EXTRA_INSTALL += " opkg"
+CORE_IMAGE_EXTRA_INSTALL += " packagegroup-core-buildessential"
+CORE_IMAGE_EXTRA_INSTALL += " ppp"
+
+EXTRA_IMAGE_FEATURES     += "tools-sdk dev-pkgs"
+
+#to add gcc
+
+"IMAGE_INSTALL +=packagegroup-core-buildessential"
+
+
+
+export ARCH=arm 
+export CROSS_COMPILE=arm-linux-gnueabihf-
+
+
+for yocto build follow the following:
+
+WIFI_FIRMWARE=y WIFI_MODULE=qca DISTRO=fsl-imx-x11 MACHINE=pico-imx7 BASEBOARD=pi source tn-setup-release.sh -b build-x11-pico-imx7
+bitbake fsl-image-qt5-validation-imx
+
+
+DISTRO=fsl-imx-x11 MACHINE=pico-imx7D BASEBOARD=pi source tn-setup-release.sh -b build-x11-pico-imx7
+
+WIFI_FIRMWARE=y WIFI_MODULE=qca DISTRO=fsl-imx-x11 MACHINE=pico-imx7 BASEBOARD=pi source setup-environment build-x11-pico-imx7
+
+bitbake core-image-base
+
+
+for kernel build
+
+bitbake virtual/kernel
+------------------------------------------------------------------------------
+for bsp related and device tree related things, modify the following:
+
+
+
+imx6ul-pico_pi.dts
+
+devic tree binary --- >  imx6ul-pico_pi.dts
+						 imx6ul-pico.dtsi
+						 
+						 imx7d-pico-pi.dts for imx7D
+						 
+						 imx7d-pico-qca.dtsi  --> this file for all the GPIOs
+
+First time kernel configuration:
+
+make tn_imx_defconfig
+
+
+					The device tree blob to be used:
+-------------------------------------------------------------------------------
+imx7d-pico-pi-qca.dtb
+
+imx7d-pico-pi-qca.dts
+
+
+#define PICO_EXT_GPIO_P24 gpio2 0
+#define PICO_EXT_GPIO_P25 gpio2 6
+#define PICO_EXT_GPIO_P26 gpio2 1
+#define PICO_EXT_GPIO_P28 gpio2 2
+#define PICO_EXT_GPIO_P30 gpio2 3
+#define PICO_EXT_GPIO_P32 gpio2 4
+#define PICO_EXT_GPIO_P34 gpio2 5
+#define PICO_EXT_GPIO_P42 gpio2 12
+#define PICO_EXT_GPIO_P44 gpio2 13
+#define PICO_EXT_GPIO_P48 gpio2 7
+						 
+-------------------------------------------------------------------------------
+Processor						Board			device tree name
+-------------------------------------------------------------------------------
+Pico-imx6_Dual_Lite_or_Solo		Pico-Pi			imx6dl-pico_pi.dtb
+Pico-imx6_Quad					Pico-Pi			imx6q-pico_pi.dtb
+Pico-imx7						Pico-Pi			imx7d-pico_pi.dtb  --------->  imx7d-pico-pi-qca.dtb ( in the new device )
+Pico-imx6ul						Pico-Pi			imx6ul-pico_pi.dtb
+Pico-imx6ull					Pico-Pi			imx6ull-pico_pi.dtb
+Pico-imx6_Dual_Lite_or_Solo  	Pico-Nymph		imx6dl-pico_nymph.dtb
+Pico-imx6_Quad					Pico-Nymph		imx6q-pico_nymph.dtb
+Pico-imx7						Pico-Nymph		imx7d-pico_nymph.dtb
+
+
+In the new kernel:( 5.4.70)
+imx6ul-pico-qca.dtsi
+imx6ul-pico-pi-qca.dtb
+
+IO pins populated in base board is as follows:
+
+#define PICO_EXT_GPIO_P24 gpio4 19
+#define PICO_EXT_GPIO_P25 gpio4 20
+#define PICO_EXT_GPIO_P26 gpio4 21
+#define PICO_EXT_GPIO_P28 gpio4 22
+#define PICO_EXT_GPIO_P30 gpio4 23
+#define PICO_EXT_GPIO_P32 gpio4 24
+#define PICO_EXT_GPIO_P34 gpio1 18
+#define PICO_EXT_GPIO_P44 gpio1 29
+#define PICO_EXT_GPIO_P48 gpio5 2
+
+
+
+						 
+
+
+
+To enable the tether.
+
+1. connmanctl tether wifi on ardupilot 9686506981
+
+
+
+
+kernel under YOCTO is store at:
+--------------------------------
+
+tmp/work/pico_imx7-poky-linux-gnueabi/linux-tn-imx/5.4-r0/
+
+---------------------------------------------------------------------------------------------------------------
+							PWM for IMx7D 
+---------------------------------------------------------------------------------------------------------------
+
+
+
+pwm1: pwm@30660000
+
+
+MACHINE_ESSENTIAL_EXTRA_RRECOMMENDS += "kernel-modules"  shall be added to the local.conf for compiling the kernel module/driver
+
+
+
+kernel and device tree under yocto:
+
+tmp/work/pico_imx7-poky-linux-gnueabi/linux-tn-imx/5.4-r0/deploy-linux-tn-imx
+
+
+In the YOCTO build if any issue is existing from .debug then replace the following
+
+-PACKAGES = "${PN}"
++PACKAGES = "${PN}-dbg ${PN}"
+
+
+YOCTO
+
+to do the menuconfig:
+
+bitbake linux-tn-imx -c menuconfig
+
+to build the kernel
+
+bitbake linux-tn-imx
+bitbake -C compile virtual/kernel
+
+
+For configuring the 4G modem:
+
+https://embexus.com/category/yocto/
+
+
+to flash the image just mount the drive, without chnaging the jumper:
+
+-> Stop at uboot
+-> ums 0 mmc 1
+		or
+-> ums 0 mmc 0
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+						Device tree location for IMx8
+------------------------------------------------------------------------------------------------------------------------
+
+/tmp/work/pico_imx8mq-poky-linux/linux-tn-imx/5.4-r0/git/arch/arm64/boot/dts/freescale/
+
+imx8mm-pico.dtsi
+imx8mq-pico-pi.dts
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+			For 64-bit driver build
+------------------------------------------------------------------------------------------------------------------------
+
+$sudo apt install crossbuild-essential-arm64
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+				kernel build for aarch64
+------------------------------------------------------------------------------------------------------------------------
+
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+						 
